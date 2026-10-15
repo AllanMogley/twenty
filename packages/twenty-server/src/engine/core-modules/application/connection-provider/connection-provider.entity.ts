@@ -34,11 +34,25 @@ export class ConnectionProviderEntity
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.39.0_AddLogoToConnectionProviderFastInstanceCommand_1788542613404',
+  })
+  logo: string | null;
+
   @Column({ nullable: false, type: 'varchar' })
   type: ConnectionProviderType;
 
   @Column({ nullable: true, type: 'jsonb' })
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.48.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791975194413',
+  })
+  identifyAccountLogicFunctionUniversalIdentifier: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({

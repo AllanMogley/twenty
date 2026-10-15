@@ -11,14 +11,15 @@ import {
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
-import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
-import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatValueForCSV,
+  isDefined,
+  sanitizeValueForCSVExport,
+} from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {
   columns: Pick<
@@ -73,7 +74,12 @@ export const generateCsv: GenerateExport = ({
     const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
       .filter((key) => key !== '__typename')
       .map((key) => {
-        const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
+        const subFieldLabelMessage =
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[columnType][key];
+        const subFieldLabel = isDefined(subFieldLabelMessage)
+          ? t(subFieldLabelMessage)
+          : key;
+
         return {
           field: `${column.field}.${key}`,
           title: formatValueForCSV(
@@ -89,11 +95,9 @@ export const generateCsv: GenerateExport = ({
     const sanitizedRow: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(row)) {
-      // Apply ZWJ sanitization to all string values
       if (typeof value === 'string') {
         sanitizedRow[key] = sanitizeValueForCSVExport(value);
       } else if (isDefined(value) && typeof value === 'object') {
-        // Handle nested objects (like composite fields)
         sanitizedRow[key] = {};
         for (const [nestedKey, nestedValue] of Object.entries(value)) {
           if (typeof nestedValue === 'string') {
@@ -125,7 +129,7 @@ const percentage = (part: number, whole: number): number => {
 };
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
-  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+  if (!isDefined(progress?.exportedRecordCount)) {
     return t`Export`;
   }
 

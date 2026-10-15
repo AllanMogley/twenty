@@ -94,9 +94,10 @@ export class WorkflowToolProvider implements ToolProvider {
       return null;
     }
 
-    return this.workflowToolService.generateWorkflowTools(
-      context.workspaceId,
-      context.rolePermissionConfig,
-    );
+    return this.workflowToolService.generateWorkflowTools({
+      workspaceId: context.workspaceId,
+      rolePermissionConfig: context.rolePermissionConfig,
+      userWorkspaceId: context.userWorkspaceId,
+    });
   }
 }

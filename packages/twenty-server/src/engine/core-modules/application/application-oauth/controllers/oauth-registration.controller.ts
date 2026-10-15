@@ -34,7 +34,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { Repository } from 'typeorm';
 
-// RFC 7591: 10 registrations per hour per IP
 const REGISTRATION_RATE_LIMIT_MAX =
   process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 100 : 10;
 const REGISTRATION_RATE_LIMIT_WINDOW_MS = 3_600_000;
@@ -68,7 +67,6 @@ export class OAuthRegistrationController {
       return rateLimitResult;
     }
 
-    // Validate redirect URIs
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
@@ -91,7 +89,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    // Validate grant_types — only authorization_code allowed for dynamic clients
     const grantTypes = body.grant_types ?? ['authorization_code'];
 
     for (const grantType of grantTypes) {
@@ -105,7 +102,6 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate response_types
     const responseTypes = body.response_types ?? ['code'];
 
     for (const responseType of responseTypes) {
@@ -138,7 +134,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    // Parse and validate scopes — cap to allowed scopes
     const validScopes: readonly string[] = ALL_OAUTH_SCOPES;
     const requestedScopes = body.scope
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))

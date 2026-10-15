@@ -8,6 +8,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import {
   type WorkflowActionType,
   type WorkflowIfElseAction,
@@ -85,7 +86,10 @@ export const SidePanelWorkflowCreateStepContent = () => {
         ? steps.find((step) => step.id === parentStepId)
         : undefined;
 
-    if (parentStep?.type === 'IF_ELSE') {
+    if (
+      parentStep?.type === 'IF_ELSE' &&
+      connectionOptions?.connectedStepType !== 'IF_ELSE'
+    ) {
       await handleIfElseParentStep({
         parentStep,
         createdStepId: createdStep.id,
@@ -102,12 +106,15 @@ export const SidePanelWorkflowCreateStepContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInSidePanel(
-      workflowVisualizerWorkflowId,
-      createdStep.name,
-      getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
-      createdStep.id,
-    );
+    openWorkflowEditStepInSidePanel({
+      workflowId: workflowVisualizerWorkflowId,
+      title: getWorkflowStepDisplayName({
+        name: createdStep.name,
+        type: createdStep.type as WorkflowActionType,
+      }),
+      icon: getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
+      stepId: createdStep.id,
+    });
   };
 
   return <SidePanelWorkflowSelectAction onActionSelected={handleCreateStep} />;

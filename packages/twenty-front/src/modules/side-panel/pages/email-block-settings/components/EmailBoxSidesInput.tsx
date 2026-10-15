@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -12,14 +12,11 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-
-  & > :first-child {
-    flex: 1;
-  }
 `;
 
 const StyledSidesGrid = styled.div`
   display: grid;
+  flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: repeat(4, 1fr);
   margin-top: ${themeCssVariables.spacing[1]};
@@ -127,24 +124,28 @@ export const EmailBoxSidesInput = ({
         )}
         <StyledUnitChip>px</StyledUnitChip>
         <LightIconButton
-          Icon={IconSquare}
-          size="small"
-          accent={isPerSide ? 'tertiary' : 'secondary'}
+          size="sm"
+          emphasis={isPerSide ? 'subtle' : 'standard'}
           title={t`Same value on every side`}
           aria-pressed={!isPerSide}
           onClick={() => {
             setIsPerSide(false);
             commitAllSides(toDisplayAmount(sides.top));
           }}
-        />
+          aria-label={t`Same value on every side`}
+        >
+          <IconSquare />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconFrame}
-          size="small"
-          accent={isPerSide ? 'secondary' : 'tertiary'}
+          size="sm"
+          emphasis={isPerSide ? 'standard' : 'subtle'}
           title={t`Edit each side`}
           aria-pressed={isPerSide}
           onClick={() => setIsPerSide(true)}
-        />
+          aria-label={t`Edit each side`}
+        >
+          <IconFrame />
+        </LightIconButton>
       </StyledRow>
     </div>
   );

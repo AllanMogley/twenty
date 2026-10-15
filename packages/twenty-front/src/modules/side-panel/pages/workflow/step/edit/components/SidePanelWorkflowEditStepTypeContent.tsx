@@ -7,6 +7,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import {
   type WorkflowAction,
   type WorkflowActionType,
@@ -68,12 +69,15 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInSidePanel(
-      workflowVisualizerWorkflowId,
-      updatedStep.name,
-      getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),
-      updatedStep.id,
-    );
+    openWorkflowEditStepInSidePanel({
+      workflowId: workflowVisualizerWorkflowId,
+      title: getWorkflowStepDisplayName({
+        name: updatedStep.name,
+        type: updatedStep.type as WorkflowActionType,
+      }),
+      icon: getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),
+      stepId: updatedStep.id,
+    });
   };
 
   return (
